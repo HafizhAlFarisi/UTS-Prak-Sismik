@@ -1,0 +1,71 @@
+#include<LiquidCrystal.h>
+const int rs= 2,e= 3, d4= 4, d5= 5, d6= 6, d7 = 7;
+LiquidCrystal lcd(rs, e, d4, d5, d6, d7);
+int ldrPin = A0; //sensor cahaya
+int LM35 = A1; // sensor suhu
+int temp;
+int LED1 = 13;
+int fan = 0;
+int min_temp = 26;
+
+void setup() {
+  // put your setup code here, to run once:
+  lcd.begin(16,2);
+  Serial.begin(9600);
+  pinMode(fan, OUTPUT);
+  pinMode(LED1, OUTPUT);
+  pinMode(ldrPin, OUTPUT);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+int ldrStatus = analogRead(ldrPin);
+  temp = analogRead(LM35);
+  temp=temp * 0.488;
+  Serial.println(temp);
+  delay(1000);
+
+  //kondisi 1
+  if (ldrStatus <=10 && temp<=min_temp){
+    digitalWrite(LED1, HIGH);
+    digitalWrite(fan, LOW);
+    lcd.print("Lampu Menyala");
+    lcd.setCursor(0,1);
+    lcd.print("Kipas Mati");
+    delay(1000);
+    lcd.clear();
+  }
+
+//kondisi 2
+  if (ldrStatus >=10 && temp>=min_temp){
+    digitalWrite (LED1, LOW);
+    digitalWrite (fan, HIGH);
+    lcd.print("Lampu Mati");
+    lcd.setCursor(0,1);
+    lcd.print("Kipas Menyala");
+    delay(1000);
+    lcd.clear();
+  }
+
+//kondisi 3
+  if (ldrStatus >=10 && temp<=min_temp){
+    digitalWrite (LED1, LOW);
+    digitalWrite (fan, LOW);
+    lcd.print("Lampu Mati");
+    lcd.setCursor(0,1);
+    lcd.print("Kipas Mati");
+    delay(1000);
+    lcd.clear();
+  }
+
+  //kondisi 4
+  if (ldrStatus <=10 && temp>=min_temp){
+    digitalWrite (LED1, HIGH);
+    digitalWrite (fan, HIGH);
+    lcd.print("Lampu Menyala");
+    lcd.setCursor(0,1);
+    lcd.print("Kipas Menyala");
+    delay(1000);
+    lcd.clear();
+  }  
+}
